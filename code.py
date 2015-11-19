@@ -2,7 +2,7 @@ import cPickle
 import theano, numpy
 from theano import tensor as T
 import lasagne
-import gensim
+#import gensim
 
 print "Loading data ..."
 f = "atis.pkl"
@@ -47,12 +47,12 @@ def word2vec(win, dim):
     for n in test_set[0]:
         exampleWI = n
         sentences.append(map(lambda x: idx2word[x], exampleWI))
-    model = gensim.models.Word2Vec(sentences, size=dim, window=win, min_count=0, workers=4)
+    #model = gensim.models.Word2Vec(sentences, size=dim, window=win, min_count=0, workers=4)
     out = []
     for sentenceA in sentences:
         sentenceContext = []
-        for word in sentenceA:
-            sentenceContext.append(model[word])
+        #for word in sentenceA:
+            #sentenceContext.append(model[word])
         pad_size = max_length - len(sentenceA)
         pad = numpy.zeros((pad_size,dim))
         sentenceContext = numpy.concatenate([sentenceContext,pad])
@@ -272,7 +272,7 @@ test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),dtype=thea
 print "Compiling functions ..."
 train_fn = theano.function([input_var, target_var, mask_var], outputs=[loss, prediction], updates=updates)
 
-train_in, test_in, train_out, test_out, mask_train, mask_test = build_word2vec_dataset()
+train_in, test_in, train_out, test_out, mask_train, mask_test = build_dataset()
 
 idx = 0
 for epoch in range(num_epochs):
@@ -287,4 +287,3 @@ for epoch in range(num_epochs):
 	print "F1 Score:", f1_score(pred2d,train_out[idx:idx+batch_size])
 
 	idx = idx + batch_size
-
